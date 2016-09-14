@@ -17,6 +17,7 @@ The Arduino should look like this:
 
 ### Problems
 * My computer won't upload the program!
+
 In this case, go to Tools -> Serial Port and select the Arduino that's currently plugged into your computer.
 
 ## Arduino Demos
@@ -43,10 +44,7 @@ This is a bit of a complex process, so feel free to contact me if you have any p
 
 3. In the search bar (on Windows) search for Anaconda prompt, and enter it. It should give you a command prompt (don't get scared!)
 
-4. Create an environment, by typing in the command
-
-`conda create -n tag-dsp python`
-
+4. Create an environment, by typing in the command `conda create -n tag-dsp python`
 This creates an environment called "tag-dsp" with the default Python installed. An environment is basically an isolated resource that allows us to write code without affecting any other projects we may have. It's fairly useful if you have multiple code projects and you don't want any packages to interfere with each other.
 
 5. Enter the environment by typing
@@ -93,6 +91,9 @@ Email me at saad4@illinois.edu if you have any questions.
 ## Links
 
 [1] Arduino (https://www.arduino.cc/en/Main/Software)
+
 [2] PySerial (https://pythonhosted.org/pyserial/)
+
 [3] Arduino with Python (http://playground.arduino.cc/Interfacing/Python)
+
 [4] PWM in Arduino (https://www.arduino.cc/en/Tutorial/PWM)
