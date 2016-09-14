@@ -13,7 +13,7 @@ Go to [the Arduno website](https://www.arduino.cc/en/Main/Software) and download
 To set up the Arduino for our demos, put an LED into pin 11. We use this pin because not only is it a digital pin, but it also can simulate an analog one, which makes it useful for Pulse-Width Modulation. 
 
 The Arduino should look like this:
-![Arduino LED Pin](../imgs/IMG_1050.jpg)
+![Arduino LED Pin](../imgs/IMG_1050.JPG)
 
 ### Problems
 * My computer won't upload the program!
@@ -61,4 +61,38 @@ You can leave the environment by typing (while you're in the environment):
 
 ## Python Demos
 
-The Python demo
+The Python demo requires the installation of pyserial. To install this, enter your environment (created above) and type:
+
+`conda install pyserial`
+
+This should install pyserial into your environment for you to use. Now we can simply run the script and control and read data from the Arduino at will.
+
+The Python script can be seen in python/ArduinoRead.py. It is to be used with the Fading_Serial program for the Arduino. 
+
+## Serial Connections
+
+The Arduino is really run through a serial connection. Data is sent through from the Arduino to the computer, one byte at a time (hence the name, serial). When we upload our code to the board, we're uploading the current program one byte at a time. Quite a few devices are serial devices, such as your mouse and keyboard. 
+
+We can open up a serial connection, by using the Serial Monitor on our computer. Go to Tools -> Serial -> Serial Port Monitor. If you're running the Fading_Serial program, you can see that the values of fadeValues are being outputted to the monitor. 
+
+To do this, we first have to initialize a Serial connection by putting up Serial.begin(baudrate) in the setup() function. This initializes a connection with a baudrate (or speed) of 9600. You can go up to 115200 if I remember correcty. Then we put in a Serial.println() for whatever we want to send. 
+
+Now, close the Serial Port Monitor. Open up your Anaconda Prompt, and navigate to your script (use the cd command to change the directory to wherever your program is located). You can run the program by typing 
+
+`python ArduinoRead.py` 
+
+in the command prompt. Voila, you should see the values of fadeValue being printed!
+
+
+## Conclusion
+This week, we covered a basic intro to Arduino, learned about PWM, and programmed a little in Python. Next week, we hopefully get our LED strips and start working with the library that comes with it. Or just solder a bunch of LED strips together. We'll see. 
+
+## Contact
+Email me at saad4@illinois.edu if you have any questions.
+
+## Links
+
+[1] Arduino (https://www.arduino.cc/en/Main/Software)
+[2] PySerial (https://pythonhosted.org/pyserial/)
+[3] Arduino with Python (http://playground.arduino.cc/Interfacing/Python)
+[4] PWM in Arduino (https://www.arduino.cc/en/Tutorial/PWM)
