@@ -13,7 +13,7 @@ Go to [the Arduno website](https://www.arduino.cc/en/Main/Software) and download
 To set up the Arduino for our demos, put an LED into pin 11. We use this pin because not only is it a digital pin, but it also can simulate an analog one, which makes it useful for Pulse-Width Modulation. 
 
 The Arduino should look like this:
-![Arduino LED Pin](../imgs/IMG_1050.JPG)
+![Arduino LED Pin](imgs/IMG_1050.JPG)
 
 ### Problems
 * My computer won't upload the program!
