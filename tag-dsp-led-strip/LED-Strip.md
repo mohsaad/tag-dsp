@@ -19,13 +19,13 @@ Activate the environment by running
 Install the following libraries:
 
 * Qt (https://www.qt.io/)
-* Python libraries
-
+* Python libraries: 
 Run the following command in your command line
+
 `conda install numpy scipy pyqtgraph pyserial`
 
-* PyAudio
-Install this by running in your command line:
+* PyAudio: Install this by running in your command line:
+
 `pip install PyAudio`
 
 You may need PortAudio, which you can download from http://www.portaudio.com/download.html
