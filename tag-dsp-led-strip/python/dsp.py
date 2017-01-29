@@ -26,10 +26,7 @@ class ExpFilter:
 
 
 def rfft(data, window=None):
-    window = 1.0 if window is None else window(len(data))
-    ys = np.abs(np.fft.rfft(data * window))
-    xs = np.fft.rfftfreq(len(data), 1.0 / config.MIC_RATE)
-    return xs, ys
+    return np.zeros([735, 24])
 
 
 def fft(data, window=None):
