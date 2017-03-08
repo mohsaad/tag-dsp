@@ -16,18 +16,27 @@ class ExpFilter:
 
     def update(self, value):
         if isinstance(self.value, (list, np.ndarray, tuple)):
-            self.value = np.zeros([len(self.value), 1])
+            alpha = value - self.value
+            alpha[alpha > 0.0] = self.alpha_rise
+            alpha[alpha <= 0.0] = self.alpha_decay
         else:
-            self.value = 0
+            alpha = self.alpha_rise if value > self.value else self.alpha_decay
+        self.value = alpha * value + (1.0 - alpha) * self.value
         return self.value
 
 
 def rfft(data, window=None):
-    return np.zeros([735, 24])
+    window = 1.0 if window is None else window(len(data))
+    ys = np.abs(np.fft.rfft(data * window))
+    xs = np.fft.rfftfreq(len(data), 1.0 / config.MIC_RATE)
+    return xs, ys
 
 
 def fft(data, window=None):
-    return np.zeros([735, 24])
+    window = 1.0 if window is None else window(len(data))
+    ys = np.fft.fft(data * window)
+    xs = np.fft.fftfreq(len(data), 1.0 / config.MIC_RATE)
+    return xs, ys
 
 
 def create_mel_bank():

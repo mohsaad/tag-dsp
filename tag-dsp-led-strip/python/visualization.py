@@ -8,6 +8,7 @@ import microphone
 import dsp
 import led
 import sys
+import struct
 
 _time_prev = time.time() * 1000.0
 """The previous time that the frames_per_second() function was called"""
@@ -178,9 +179,70 @@ def microphone_update(stream):
     global y_roll, prev_rms, prev_exp
     # Retrieve and normalize the new audio samples
     try:
-        y = np.fromstring(stream.read(samples_per_frame), dtype=np.int16)
+        test = stream.read(samples_per_frame)
+        y = np.fromstring(test, dtype=np.int16)
+    except IOError:
+
+
+        y = y_roll[config.N_ROLLING_HISTORY - 1, :]
+        print(y)
+        sys.exit(1)
+        global buffer_overflows
+        print('Buffer overflows: {0}'.format(buffer_overflows))
+        buffer_overflows += 1
+    # Normalize samples between 0 and 1
+    y = y / 2.0**15
+    # Construct a rolling window of audio samples
+    y_roll = np.roll(y_roll, -1, axis=0)
+    y_roll[-1, :] = np.copy(y)
+    y_data = np.concatenate(y_roll, axis=0)
+    volume.update(np.nanmean(y_data ** 2))
+
+    if volume.value < config.MIN_VOLUME_THRESHOLD:
+        print('No audio input. Volume below threshold. Volume:', volume.value)
+        led.pixels = np.tile(0, (3, config.N_PIXELS))
+        led.update()
+    else:
+        # Transform audio input into the frequency domain
+        XS, YS = dsp.fft(y_data, window=np.hamming)
+        # Remove half of the FFT data because of symmetry
+        YS = YS[:len(YS) // 2]
+        XS = XS[:len(XS) // 2]
+        # Construct a Mel filterbank from the FFT data
+        mel = np.atleast_2d(np.abs(YS)).T * dsp.mel_y.T
+        # Scale data to values more suitable for visualization
+        mel = np.mean(mel, axis=0)
+        mel = mel**2.0
+        # Gain normalization
+        mel_gain.update(np.max(gaussian_filter1d(mel, sigma=1.0)))
+        mel = mel / mel_gain.value
+        mel = mel_smoothing.update(mel)
+        # Map filterbank output onto LED strip
+        output = visualization_effect(mel)
+        led.pixels = output
+        led.update()
+        if config.USE_GUI:
+            # Plot filterbank output
+            x = np.linspace(config.MIN_FREQUENCY, config.MAX_FREQUENCY, len(mel))
+            mel_curve.setData(x=x, y=fft_plot_filter.update(mel))
+            # Plot the color channels
+            r_curve.setData(y=led.pixels[0])
+            g_curve.setData(y=led.pixels[1])
+            b_curve.setData(y=led.pixels[2])
+    if config.USE_GUI:
+        app.processEvents()
+    if config.DISPLAY_FPS:
+        print('FPS {:.0f} / {:.0f}'.format(frames_per_second(), config.FPS))
+
+def file_update(data):
+    global y_roll, prev_rms, prev_exp
+    # Retrieve and normalize the new audio samples
+    try:
+        y = data
     except IOError:
         y = y_roll[config.N_ROLLING_HISTORY - 1, :]
+        print(y)
+        sys.exit(1)
         global buffer_overflows
         print('Buffer overflows: {0}'.format(buffer_overflows))
         buffer_overflows += 1
@@ -236,7 +298,7 @@ print(samples_per_frame)
 # Array containing the rolling audio sample window
 y_roll = np.random.rand(config.N_ROLLING_HISTORY, samples_per_frame) / 1e16
 
-visualization_effect = visualize_energy
+visualization_effect = visualize_spectrum
 """Visualization effect to display on the LED strip"""
 
 
@@ -341,4 +403,5 @@ if __name__ == '__main__':
     # Initialize LEDs
     led.update()
     # Start listening to live audio stream
-    microphone.start_stream(microphone_update)
+    # microphone.start_stream(microphone_update)
+    microphone.start_file_stream(file_update)
